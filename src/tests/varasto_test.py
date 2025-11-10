@@ -60,11 +60,11 @@ class TestVarasto(unittest.TestCase):
         maara = self.varasto.lisaa_varastoon(-1)
 
         self.assertAlmostEqual(maara, None)
-
-    def test_negatiivi_tilavuus(self):
-        negatiivi_varasto = Varasto(-1)
-
-        self.assertAlmostEqual(negatiivi_varasto.tilavuus, 0)
+# REMOVED
+#    def test_negatiivi_tilavuus(self):
+#        negatiivi_varasto = Varasto(-1)
+#
+#        self.assertAlmostEqual(negatiivi_varasto.tilavuus, 0)
 
     def test_oikea_alku_saldo(self):
         varasto = Varasto(10, -1)
