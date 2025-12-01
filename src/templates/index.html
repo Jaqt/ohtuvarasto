@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Warehouses - Warehouse Manager{% endblock %}
+
+{% block content %}
+<h1>Warehouses</h1>
+
+{% if warehouses %}
+    <style>
+        .warehouse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .warehouse-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+        .warehouse-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .warehouse-info {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .warehouse-info strong {
+            color: #333;
+        }
+        .warehouse-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .warehouse-actions a,
+        .warehouse-actions button {
+            flex: 1;
+            text-align: center;
+        }
+    </style>
+    
+    <div class="warehouse-grid">
+        {% for id, warehouse in warehouses.items() %}
+        <div class="warehouse-card">
+            <h2>{{ warehouse.name }}</h2>
+            <div class="warehouse-info">
+                <strong>Capacity:</strong> {{ "%.2f"|format(warehouse.varasto.tilavuus) }} units
+            </div>
+            <div class="warehouse-info">
+                <strong>Current Stock:</strong> {{ "%.2f"|format(warehouse.varasto.saldo) }} units
+            </div>
+            <div class="warehouse-info">
+                <strong>Available Space:</strong> {{ "%.2f"|format(warehouse.varasto.paljonko_mahtuu()) }} units
+            </div>
+            <div class="warehouse-actions">
+                <a href="{{ url_for('warehouse_detail', warehouse_id=warehouse.id) }}" class="btn">View Details</a>
+                <form method="POST" action="{{ url_for('delete_warehouse', warehouse_id=warehouse.id) }}" style="display:inline; margin:0;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this warehouse?')">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p style="margin-top: 20px; color: #666;">No warehouses yet. <a href="{{ url_for('create_warehouse') }}">Create your first warehouse</a></p>
+{% endif %}
+{% endblock %}
