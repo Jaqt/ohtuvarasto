@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from varasto import Varasto
 
 app = Flask(__name__)
+# SECURITY WARNING: Change this secret key in production!
+# Use environment variables: app.secret_key = os.environ.get('SECRET_KEY')
 app.secret_key = 'dev-secret-key-change-in-production'
 
 # In-memory storage for warehouses
@@ -24,15 +26,15 @@ def create_warehouse():
         try:
             capacity = float(request.form.get('capacity', 0))
             initial_stock = float(request.form.get('initial_stock', 0))
-            
+
             if not name:
                 flash('Warehouse name is required', 'error')
                 return redirect(url_for('create_warehouse'))
-            
+
             if capacity <= 0:
                 flash('Capacity must be greater than 0', 'error')
                 return redirect(url_for('create_warehouse'))
-            
+
             warehouse_counter += 1
             warehouses[warehouse_counter] = {
                 'id': warehouse_counter,
@@ -44,7 +46,7 @@ def create_warehouse():
         except ValueError:
             flash('Invalid number format', 'error')
             return redirect(url_for('create_warehouse'))
-    
+
     return render_template('create.html')
 
 
@@ -54,7 +56,7 @@ def warehouse_detail(warehouse_id):
     if warehouse_id not in warehouses:
         flash('Warehouse not found', 'error')
         return redirect(url_for('index'))
-    
+
     warehouse = warehouses[warehouse_id]
     return render_template('detail.html', warehouse=warehouse)
 
@@ -65,7 +67,7 @@ def add_to_warehouse(warehouse_id):
     if warehouse_id not in warehouses:
         flash('Warehouse not found', 'error')
         return redirect(url_for('index'))
-    
+
     try:
         amount = float(request.form.get('amount', 0))
         if amount > 0:
@@ -75,7 +77,7 @@ def add_to_warehouse(warehouse_id):
             flash('Amount must be greater than 0', 'error')
     except ValueError:
         flash('Invalid number format', 'error')
-    
+
     return redirect(url_for('warehouse_detail', warehouse_id=warehouse_id))
 
 
@@ -85,7 +87,7 @@ def remove_from_warehouse(warehouse_id):
     if warehouse_id not in warehouses:
         flash('Warehouse not found', 'error')
         return redirect(url_for('index'))
-    
+
     try:
         amount = float(request.form.get('amount', 0))
         if amount > 0:
@@ -95,7 +97,7 @@ def remove_from_warehouse(warehouse_id):
             flash('Amount must be greater than 0', 'error')
     except ValueError:
         flash('Invalid number format', 'error')
-    
+
     return redirect(url_for('warehouse_detail', warehouse_id=warehouse_id))
 
 
@@ -108,9 +110,10 @@ def delete_warehouse(warehouse_id):
         flash(f'Warehouse "{name}" deleted successfully!', 'success')
     else:
         flash('Warehouse not found', 'error')
-    
+
     return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
+    # DEVELOPMENT ONLY: Debug mode should be False in production
     app.run(debug=True)
